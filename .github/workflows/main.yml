@@ -17,7 +17,7 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: '3.12.5'
-        
+
     - name: Install dependencies
       run: |
         pip install -r requirements.txt
@@ -40,31 +40,34 @@ jobs:
       run: |
         python Health_Insurance_Fraud_Detection_Pipeline.py
 
-    - name: Save Visualizations
-      run: |
-        mkdir -p output
-        mv *.png *.jpg output/ || echo "No visualization files to move."
-
-    - name: Save Model Files
-      run: |
-        mkdir -p models
-        mv *.pkl models/ || echo "No model files to move."
-
-    - name: Commit and Push Models
-      if: success() && steps.save_model_files.outputs.changed == 'true'
-      run: |
-        git add models/*
-        git commit -m "Add updated model files"
-        git push origin main
-
     - name: Commit and Push Visualizations
-      if: success() && steps.save_visualizations.outputs.changed == 'true'
+      if: success()
       env:
         GIT_USER_NAME: ${{ secrets.GIT_USER_NAME }}
         GIT_USER_EMAIL: ${{ secrets.GIT_USER_EMAIL }}
       run: |
         git config --global user.name "${{ secrets.GIT_USER_NAME }}"
         git config --global user.email "${{ secrets.GIT_USER_EMAIL }}"
-        git add output/*
-        git commit -m "Add updated data visualizations"
-        git push origin main
+        if ls output/*.png 1> /dev/null 2>&1; then
+          git add output/*.png
+          git commit -m "Add updated data visualizations"
+          git push origin main
+        else
+          echo "No visualization files to add."
+        fi
+
+    - name: Commit and Push Models
+      if: success()
+      env:
+        GIT_USER_NAME: ${{ secrets.GIT_USER_NAME }}
+        GIT_USER_EMAIL: ${{ secrets.GIT_USER_EMAIL }}
+      run: |
+        git config --global user.name "${{ secrets.GIT_USER_NAME }}"
+        git config --global user.email "${{ secrets.GIT_USER_EMAIL }}"
+        if ls output/*.pkl 1> /dev/null 2>&1; then
+          git add output/*.pkl
+          git commit -m "Add updated model files"
+          git push origin main
+        else
+          echo "No model files to add."
+        fi
