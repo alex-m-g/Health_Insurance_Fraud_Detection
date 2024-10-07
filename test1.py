@@ -18,26 +18,14 @@ def data_wrangle(folder):
 
     print("Successful variable assignment")
 
-    
-    # replace 2 to 0 for the chronic conditions to indicate False.
-    df_train_beneficiary_data = df_train_beneficiary_data.replace({'ChronicCond_Alzheimer': 2, 'ChronicCond_Heartfailure': 2, 'ChronicCond_KidneyDisease': 2,
-                               'ChronicCond_Cancer': 2, 'ChronicCond_ObstrPulmonary': 2, 'ChronicCond_Depression': 2, 
-                               'ChronicCond_Diabetes': 2, 'ChronicCond_IschemicHeart': 2, 'ChronicCond_Osteoporasis': 2, 
-                               'ChronicCond_rheumatoidarthritis': 2, 'ChronicCond_stroke': 2 }, 0)
-    
-    print("Successful df_train_benificiary_data reassignment Part 1")
-
-    # For RenalDiseaseIndicator replacing 'Y' with 1
-    df_train_beneficiary_data = df_train_beneficiary_data.replace({'RenalDiseaseIndicator': 'Y'}, 1)
-    
-    print("Successful df_train_benificiary_data reassignment Part 2")
-
-    print(df_train_beneficiary_data.columns)
-
-    # convert all these columns datatypes to numeric
-    # Select all columns that start with 'ChronicCond_' or 'RenalDiseaseIndicator' and apply conversion
-    df_train_beneficiary_data[df_train_beneficiary_data.filter(like='ChronicCond_').columns.tolist() + ['RenalDiseaseIndicator']] = df_train_beneficiary_data[df_train_beneficiary_data.filter(like='ChronicCond_').columns.tolist() + ['RenalDiseaseIndicator']].apply(pd.to_numeric)
-    print("Successful conversion of df_train_benificiary_data to numeric")
+    print(f"df_test:\n{df_test.columns}")
+    print(f"df_test_beneficiary_data:\n{df_test_beneficiary_data.columns}")
+    print(f"df_train_inpatient_data:\n{df_train_inpatient_data.columns}")
+    print(f"df_train_outpatient_data:\n{df_train_outpatient_data.columns}")
+    print(f"df_train:\n{df_train.columns}")
+    print(f"df_train_beneficiary_data:\n{df_train_beneficiary_data.columns}")
+    print(f"df_train_inpatient_data:\n{df_train_inpatient_data.columns}")
+    print(f"df_train_outpatient_data:\n{df_train_outpatient_data.columns}")
 
 def main():
     folder = "archive"
