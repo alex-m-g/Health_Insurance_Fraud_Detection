@@ -141,6 +141,8 @@ def data_wrangle(folder):
         file_path = os.path.join(folder, file)
         files.append(file_path)
 
+    print(files)
+    
     df_train = pd.read_csv(files[0])
     df_train_outpatient_data = pd.read_csv(files[1])
     df_test_beneficiary_data = pd.read_csv(files[2])
