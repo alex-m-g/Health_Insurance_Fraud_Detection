@@ -26,82 +26,70 @@ from imblearn.pipeline import Pipeline
 import joblib
 import xgboost as xgb
 
+def xgboost_model(x_train, x_val, x_test, y_train, y_val, y_test):
+    dtrain = xgb.DMatrix(x_train, label=y_train)
+    dval = xgb.DMatrix(x_val, label=y_val)
+    dtest = xgb.DMatrix(x_test, label=y_test)
+
+    # Set up XGBoost parameters
+    params = {
+        'booster': 'gbtree',
+        'objective': 'binary:logistic',
+        'eval_metric': 'logloss',
+        'eta': 0.3,
+        'max_depth': 6,
+        'subsample': 0.8,
+        'colsample_bytree': 0.8,
+        'scale_pos_weight': len(y_train[y_train == 0]) / len(y_train[y_train == 1]),
+        'seed': 42
+    }
+
+    watchlist = [(dtrain, 'train'), (dval, 'eval')]  # Track training and validation performance
+
+    model = xgb.train(params, dtrain, num_boost_round=100, evals=watchlist, early_stopping_rounds=10)
+
+    y_pred_prob1 = model.predict(dval)  # Predicted probabilities
+    y_pred1 = [1 if y > 0.5 else 0 for y in y_pred_prob1]  # Convert probabilities to binary predictions
+
+    return y_pred_prob1, y_pred1
+
+def log_reg_model(x_train, y_train, x_val):
+    logistic_model = LogisticRegression()
+    logistic_model.fit(x_train, y_train)
+
+    y_val_pred_prob2 = logistic_model.predict_proba(x_val)[:, 1] # Predicted probabilities for class 1 (Fraudulent)
+    y_pred2 = logistic_model.predict(x_val)
+    return y_val_pred_prob2, y_pred2
+
+def linear_svc_model(x_train, y_train, x_val):
+    svc = LinearSVC(class_weight='balanced')
+    svc.fit(x_train, y_train)
+
+    y_pred3 = svc.predict(x_val)
+    y_pred_prob3 = svc.decision_function(x_val)  # Decision function for ROC-AUC
+
+    return y_pred_prob3, y_pred3
+
+def gradient_boost_model(x_train, y_train, x_val):
+    gbc = GradientBoostingClassifier(n_estimators=50, learning_rate=1.0, max_depth=1, random_state=0)
+    gbc.fit(x_train, y_train)
+
+    y_pred_prob4 = gbc.predict_proba(x_val)[:,1]
+    y_pred4 = gbc.predict(x_val)
+    return y_pred_prob4, y_pred4
+
 def ensemble_model(x_train, y_train, x_test, y_test, x_val, y_val):
     # 1. Train the models
     ## XGBoost Model
-    def xgboost_model(x_train, x_val, x_test, y_train, y_val, y_test):
-        dtrain = xgb.DMatrix(x_train, label=y_train)
-        dval = xgb.DMatrix(x_val, label=y_val)
-        dtest = xgb.DMatrix(x_test, label=y_test)
-
-        # Set up XGBoost parameters
-        params = {
-            'booster': 'gbtree',
-            'objective': 'binary:logistic',
-            'eval_metric': 'logloss',
-            'eta': 0.3,
-            'max_depth': 6,
-            'subsample': 0.8,
-            'colsample_bytree': 0.8,
-            'scale_pos_weight': len(y_train[y_train == 0]) / len(y_train[y_train == 1]),
-            'seed': 42
-        }
-
-        watchlist = [(dtrain, 'train'), (dval, 'eval')]  # Track training and validation performance
-
-        model = xgb.train(params, dtrain, num_boost_round=100, evals=watchlist, early_stopping_rounds=10)
-        
-        # Save XGBoost model
-        joblib.dump(model, "xgboost_model.pkl")
-
-        y_pred_prob1 = model.predict(dval)  # Predicted probabilities
-        y_pred1 = [1 if y > 0.5 else 0 for y in y_pred_prob1]  # Convert probabilities to binary predictions
-
-        return y_pred_prob1, y_pred1
-    
     y_pred_prob1, y_pred1 = xgboost_model(x_train, x_val, x_test, y_train, y_val, y_test)
 
     ## Logistic Regression Model
-    def log_reg_model(x_train, y_train, x_val):
-        logistic_model = LogisticRegression()
-        logistic_model.fit(x_train, y_train)
-
-        # Save Logistic Regression model
-        joblib.dump(logistic_model, "log_reg_model.pkl")
-
-        y_val_pred_prob2 = logistic_model.predict_proba(x_val)[:, 1] # Predicted probabilities for class 1 (Fraudulent)
-        y_pred2 = logistic_model.predict(x_val)
-        return y_val_pred_prob2, y_pred2
-    
     y_pred_prob2, y_pred2 = log_reg_model(x_train, y_train, x_val)
 
     ## Linear SVC Model
-    def linear_svc_model(x_train, y_train, x_val):
-        svc = LinearSVC(class_weight='balanced')
-        svc.fit(x_train, y_train)
-
-        # Save Linear SVC model
-        joblib.dump(svc, "linear_svc_model.pkl")
-
-        y_pred3 = svc.predict(x_val)
-        y_pred_prob3 = svc.decision_function(x_val)  # Decision function for ROC-AUC
-
-        return y_pred_prob3, y_pred3
-
     y_pred_prob3, y_pred3 = linear_svc_model(x_train, y_train, x_val)
 
     ## Gradient Boosting Classifier
-    def gradient_boost_model(x_train, y_train, x_val):
-        gbc = GradientBoostingClassifier(n_estimators=50, learning_rate=1.0, max_depth=1, random_state=0)
-        gbc.fit(x_train, y_train)
-
-        # Save Gradient Boosting model
-        joblib.dump(gbc, "gradient_boost_model.pkl")
-
-        y_pred_prob4 = gbc.predict_proba(x_val)[:,1]
-        y_pred4 = gbc.predict(x_val)
-        return y_pred_prob4, y_pred4
-    
     y_pred_prob4, y_pred4 = gradient_boost_model(x_train, y_train, x_val)
 
     # 2. Aggregate Predictions
@@ -124,7 +112,8 @@ def ensemble_model(x_train, y_train, x_test, y_test, x_val, y_val):
     plt.ylabel("True Positive Rate")
     plt.title("ROC-AUC Curve")
     plt.legend(loc="lower right")
-    plt.show()
+    plt.savefig('output/roc_auc_curve.png')
+    plt.close()
 
     # 5. Confusion Matrix and Classification Report
     conf_matrix = confusion_matrix(y_val, final_predictions)
@@ -133,15 +122,18 @@ def ensemble_model(x_train, y_train, x_test, y_test, x_val, y_val):
     plt.figure(figsize=(8, 6))
     conf_matrix_display.plot(cmap=plt.cm.Blues)
     plt.title("Confusion Matrix Heatmap")
-    plt.show()
+    plt.savefig('output/confusion_matrix_heatmap.png')
+    plt.close()
 
     print(classification_report(y_val, final_predictions, target_names=['Not Fraud', 'Fraud']))
 
+    # 5. Save Trained Models
+    joblib.dump(xgboost_model, 'output/xgboost_model.pkl')
+    joblib.dump(log_reg_model, 'output/log_reg_model.pkl')
+    joblib.dump(linear_svc_model, 'output/linear_svc_model.pkl')
+    joblib.dump(gradient_boost_model, 'output/gradient_boost_model.pkl')
+
     print(f"Trained Models saved to local hard drive: 'xgboost_model.pkl', 'log_reg_model.pkl', 'linear_svc_model.pkl', 'gradient_boost_model.pkl'.")
-
-    plt.savefig('output/roc_auc_curve.png') # Save the ROC-AUC curve
-    plt.savefig('output/confusion_matrix_heatmap.png') # save the confusion matrix heatmap
-
 
 def data_wrangle(folder):
     files = []
@@ -392,6 +384,8 @@ def main():
     folder = "archive"
     x_train, y_train, x_test, y_test, x_val, y_val = data_wrangle(folder)
     x_train, x_val, x_test, y_train = standardization_and_sample_balance(x_train, x_val, x_test, y_train)
+    if not os.path.exists('output'):
+        os.makedirs('output')
     ensemble_model(x_train, y_train, x_test, y_test, x_val, y_val)
 
 if __name__ == "__main__":
