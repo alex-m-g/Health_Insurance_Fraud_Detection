@@ -7,6 +7,8 @@ def data_wrangle(folder):
         file_path = os.path.join(folder, file)
         files.append(file_path)
 
+    print(files)
+
     df_test = pd.read_csv(files[0])
     df_test_beneficiary_data = pd.read_csv(files[1])
     df_test_inpatient_data = pd.read_csv(files[2])
