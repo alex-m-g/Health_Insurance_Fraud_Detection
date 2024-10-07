@@ -33,11 +33,8 @@ def data_wrangle(folder):
     print("Successful df_train_benificiary_data reassignment Part 2")
 
     # convert all these columns datatypes to numeric
-    df_train_beneficiary_data[["ChronicCond_Alzheimer", "ChronicCond_Heartfailure", "ChronicCond_KidneyDisease", "ChronicCond_Cancer", "ChronicCond_ObstrPulmonary", 
-                               "ChronicCond_Depression", "ChronicCond_Diabetes", "ChronicCond_IschemicHeart", "ChronicCond_Osteoporasis", "ChronicCond_rheumatoidarthritis", "ChronicCond_stroke", 
-                               "RenalDiseaseIndicator"]] =df_train_beneficiary_data[["ChronicCond_Alzheimer", "ChronicCond_Heartfailure", "ChronicCond_KidneyDisease", 
-                                                                                    "ChronicCond_Cancer", "ChronicCond_ObstrPulmonary", "ChronicCond_Depression", "ChronicCond_Diabetes", "ChronicCond_IschemicHeart", 
-                                                                                    "ChronicCond_Osteoporasis", "ChronicCond_rheumatoidarthritis", "ChronicCond_stroke", "RenalDiseaseIndicator"]].apply(pd.to_numeric)
+    # Select all columns that start with 'ChronicCond_' or 'RenalDiseaseIndicator' and apply conversion
+    df_train_beneficiary_data[df_train_beneficiary_data.filter(like='ChronicCond_').columns.tolist() + ['RenalDiseaseIndicator']] = df_train_beneficiary_data[df_train_beneficiary_data.filter(like='ChronicCond_').columns.tolist() + ['RenalDiseaseIndicator']].apply(pd.to_numeric)
     print("Successful conversion of df_train_benificiary_data to numeric")
 
 def main():
