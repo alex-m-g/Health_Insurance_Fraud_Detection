@@ -22,6 +22,11 @@ jobs:
       run: |
         pip install -r requirements.txt
 
+    # Install Kaggle CLI
+    - name: Install Kaggle CLI
+      run: |
+        pip install kaggle
+
     - name: Download Kaggle Dataset
       env:
         KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
@@ -46,11 +51,6 @@ jobs:
         mkdir -p models
         mv *.pkl models/  # Move model files to the 'models' directory
 
-    - name: Set up Git
-      run: |
-        git config --global user.name "alex-m-g"
-        git config --global user.email "alexg9630@gmail.com"
-
     - name: Commit and Push Models
       run: |
         git add models/*
@@ -59,6 +59,8 @@ jobs:
 
     - name: Commit and Push Visualizations
       run: |
+        git config --global user.name "alex-m-g"
+        git config --global user.email "alexg9630@gmail.com"
         git add output/*
         git commit -m "Add updated data visualizations"
         git push origin main
