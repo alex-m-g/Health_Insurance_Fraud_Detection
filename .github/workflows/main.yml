@@ -1,0 +1,64 @@
+name: Fraud Detection Automation
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  run_model:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: '3.12.3'
+        
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Download Kaggle Dataset
+      env:
+        KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
+        KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
+      run: |
+        mkdir -p ~/.kaggle
+        echo "{\"username\":\"${{ secrets.KAGGLE_USERNAME }}\",\"key\":\"${{ secrets.KAGGLE_KEY }}\"}" > ~/.kaggle/kaggle.json
+        chmod 600 ~/.kaggle/kaggle.json
+        kaggle datasets download -d rohitrox/healthcare-provider-fraud-detection-analysis --unzip -p ./data
+
+    - name: Run Fraud Detection Model
+      run: |
+        python Health_Insurance_Fraud_Detection_Pipeline.py  # Running your main fraud detection script
+
+    - name: Save Visualizations
+      run: |
+        mkdir -p output
+        mv *.png output/  # Assuming your script saves visualizations as .png files
+
+    - name: Save Model Files
+      run: |
+        mkdir -p models
+        mv *.pkl models/  # Move model files to the 'models' directory
+
+    - name: Set up Git
+      run: |
+        git config --global user.name "alex-m-g"
+        git config --global user.email "alexg9630@gmail.com"
+
+    - name: Commit and Push Models
+      run: |
+        git add models/*
+        git commit -m "Add updated model files"
+        git push origin main
+
+    - name: Commit and Push Visualizations
+      run: |
+        git add output/*
+        git commit -m "Add updated data visualizations"
+        git push origin main
