@@ -9,8 +9,8 @@ def data_wrangle(folder):
 
     df_test = pd.read_csv(files[0])
     df_test_beneficiary_data = pd.read_csv(files[1])
-    df_train_inpatient_data = pd.read_csv(files[2])
-    df_train_outpatient_data = pd.read_csv(files[3])
+    df_test_inpatient_data = pd.read_csv(files[2])
+    df_test_outpatient_data = pd.read_csv(files[3])
     df_train = pd.read_csv(files[4])
     df_train_beneficiary_data = pd.read_csv(files[5])
     df_train_inpatient_data = pd.read_csv(files[6])
@@ -20,8 +20,8 @@ def data_wrangle(folder):
 
     print(f"df_test:\n{df_test.columns}")
     print(f"df_test_beneficiary_data:\n{df_test_beneficiary_data.columns}")
-    print(f"df_train_inpatient_data:\n{df_train_inpatient_data.columns}")
-    print(f"df_train_outpatient_data:\n{df_train_outpatient_data.columns}")
+    print(f"df_test_inpatient_data:\n{df_test_inpatient_data.columns}")
+    print(f"df_test_outpatient_data:\n{df_test_outpatient_data.columns}")
     print(f"df_train:\n{df_train.columns}")
     print(f"df_train_beneficiary_data:\n{df_train_beneficiary_data.columns}")
     print(f"df_train_inpatient_data:\n{df_train_inpatient_data.columns}")
