@@ -141,14 +141,14 @@ def data_wrangle(folder):
         file_path = os.path.join(folder, file)
         files.append(file_path)
 
-    df_test = pd.read_csv(files[1])
-    df_test_beneficiary_data = pd.read_csv(files[2])
-    df_train_inpatient_data = pd.read_csv(files[3])
-    df_train_outpatient_data = pd.read_csv(files[4])
-    df_train = pd.read_csv(files[5])
-    df_train_beneficiary_data = pd.read_csv(files[6])
-    df_train_inpatient_data = pd.read_csv(files[7])
-    df_train_outpatient_data = pd.read_csv(files[8])
+    df_test = pd.read_csv(files[0])
+    df_test_beneficiary_data = pd.read_csv(files[1])
+    df_train_inpatient_data = pd.read_csv(files[2])
+    df_train_outpatient_data = pd.read_csv(files[3])
+    df_train = pd.read_csv(files[4])
+    df_train_beneficiary_data = pd.read_csv(files[5])
+    df_train_inpatient_data = pd.read_csv(files[6])
+    df_train_outpatient_data = pd.read_csv(files[7])
 
     # replace 2 to 0 for the chronic conditions to indicate False.
     df_train_beneficiary_data = df_train_beneficiary_data.replace({'ChronicCond_Alzheimer': 2, 'ChronicCond_Heartfailure': 2, 'ChronicCond_KidneyDisease': 2,
