@@ -30,7 +30,7 @@ jobs:
         mkdir -p ~/.kaggle
         echo "{\"username\":\"${{ secrets.KAGGLE_USERNAME }}\",\"key\":\"${{ secrets.KAGGLE_KEY }}\"}" > ~/.kaggle/kaggle.json
         chmod 600 ~/.kaggle/kaggle.json
-        kaggle datasets download -d rohitrox/healthcare-provider-fraud-detection-analysis --unzip -p ./data
+        kaggle datasets download -d rohitrox/healthcare-provider-fraud-detection-analysis --unzip -p ./archive
 
     - name: Run Fraud Detection Model
       run: |
