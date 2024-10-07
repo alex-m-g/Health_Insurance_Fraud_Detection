@@ -23,6 +23,10 @@ This project aims to " predict the potentially fraudulent providers " based on t
 [Health_Insurance_Fraud_Detection.ipynb](./Health_Insurance_Fraud_Detection.ipynb)
 ## Final File
 [Health Insurance Fraud Detection Model](./Health_Insurance_Fraud_Detection_Pipeline.py)
+## Results and Analysis Visualizations
+[Model Performance Heatmap](./output/confusion_matrix_heatmap.png)
+[Model Performance ROC-AUC Curve](./output/roc_auc_curve.png)
+[Saved pre-trained Fraud Detection Models](./output)
 
 ## Libraries and Frameworks:
 
