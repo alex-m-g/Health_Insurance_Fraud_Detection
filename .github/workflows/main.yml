@@ -38,7 +38,7 @@ jobs:
 
     - name: Run Fraud Detection Model
       run: |
-        python Health_Insurance_Fraud_Detection_Pipeline.py
+        python test1.py
 
     - name: Save Visualizations
       run: |
