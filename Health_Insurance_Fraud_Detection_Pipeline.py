@@ -145,19 +145,18 @@ def ensemble_model(x_train, y_train, x_test, y_test, x_val, y_val):
 
 def data_wrangle(folder):
     files = []
-    for file in os.listdir("Dataset_Health_Insurance"):
-        file_path = os.path.join("Dataset_Health_Insurance", file)
+    for file in os.listdir(folder):
+        file_path = os.path.join(folder, file)
         files.append(file_path)
 
-    claims_code = pd.read_csv(files[0])
-    df_test = pd.read_csv(files[1])
-    df_test_beneficiary_data = pd.read_csv(files[2])
-    df_train_inpatient_data = pd.read_csv(files[3])
-    df_train_outpatient_data = pd.read_csv(files[4])
-    df_train = pd.read_csv(files[5])
-    df_train_beneficiary_data = pd.read_csv(files[6])
-    df_train_inpatient_data = pd.read_csv(files[7])
-    df_train_outpatient_data = pd.read_csv(files[8])
+    df_test = pd.read_csv(files[0])
+    df_test_beneficiary_data = pd.read_csv(files[1])
+    df_train_inpatient_data = pd.read_csv(files[2])
+    df_train_outpatient_data = pd.read_csv(files[3])
+    df_train = pd.read_csv(files[4])
+    df_train_beneficiary_data = pd.read_csv(files[5])
+    df_train_inpatient_data = pd.read_csv(files[6])
+    df_train_outpatient_data = pd.read_csv(files[7])
 
     # replace 2 to 0 for the chronic conditions to indicate False.
     df_train_beneficiary_data = df_train_beneficiary_data.replace({'ChronicCond_Alzheimer': 2, 'ChronicCond_Heartfailure': 2, 'ChronicCond_KidneyDisease': 2,
@@ -390,11 +389,10 @@ def standardization_and_sample_balance(x_train, x_val, x_test, y_train):
     return x_train, x_val, x_test, y_train
 
 def main():
-    folder = "Dataset_Health_Insurance"
+    folder = "archive"
     x_train, y_train, x_test, y_test, x_val, y_val = data_wrangle(folder)
     x_train, x_val, x_test, y_train = standardization_and_sample_balance(x_train, x_val, x_test, y_train)
     ensemble_model(x_train, y_train, x_test, y_test, x_val, y_val)
 
 if __name__ == "__main__":
     main()
- 
