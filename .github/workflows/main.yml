@@ -22,7 +22,6 @@ jobs:
       run: |
         pip install -r requirements.txt
 
-    # Install Kaggle CLI
     - name: Install Kaggle CLI
       run: |
         pip install kaggle
@@ -39,28 +38,33 @@ jobs:
 
     - name: Run Fraud Detection Model
       run: |
-        python Health_Insurance_Fraud_Detection_Pipeline.py  # Running your main fraud detection script
+        python Health_Insurance_Fraud_Detection_Pipeline.py
 
     - name: Save Visualizations
       run: |
         mkdir -p output
-        mv *.png output/  # Assuming your script saves visualizations as .png files
+        mv *.png *.jpg output/ || echo "No visualization files to move."
 
     - name: Save Model Files
       run: |
         mkdir -p models
-        mv *.pkl models/  # Move model files to the 'models' directory
+        mv *.pkl models/ || echo "No model files to move."
 
     - name: Commit and Push Models
+      if: success() && steps.save_model_files.outputs.changed == 'true'
       run: |
         git add models/*
         git commit -m "Add updated model files"
         git push origin main
 
     - name: Commit and Push Visualizations
+      if: success() && steps.save_visualizations.outputs.changed == 'true'
+      env:
+        GIT_USER_NAME: ${{ secrets.GIT_USER_NAME }}
+        GIT_USER_EMAIL: ${{ secrets.GIT_USER_EMAIL }}
       run: |
-        git config --global user.name "alex-m-g"
-        git config --global user.email "alexg9630@gmail.com"
+        git config --global user.name "${{ secrets.GIT_USER_NAME }}"
+        git config --global user.email "${{ secrets.GIT_USER_EMAIL }}"
         git add output/*
         git commit -m "Add updated data visualizations"
         git push origin main
